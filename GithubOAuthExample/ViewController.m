@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "Keys.h"
 
 @interface ViewController ()
 
@@ -35,4 +36,9 @@
     }
 }
 
+- (IBAction)startOAuth:(id)sender {
+    NSString *scope = @"public_repo,repo,repo:status,gist";
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://github.com/login/oauth/authorize?client_id=%@&scope=%@",kClientId, scope]];
+    [[UIApplication sharedApplication] openURL:url];
+}
 @end
