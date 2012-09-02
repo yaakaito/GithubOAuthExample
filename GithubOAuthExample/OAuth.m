@@ -12,14 +12,33 @@
 
 @implementation OAuth
 
-- (void)oauthWithCode:(NSString *)code {
++ (id)sharedObject {
+    
+    static dispatch_once_t pred = 0;
+    __strong static id _sharedObject = nil;
+    dispatch_once(&pred, ^{
+        _sharedObject = [[self alloc] init];
+    });
+    return _sharedObject;
+}
+
++ (NSString *)stateGen {
+    // なんかしらのアルゴリズムで作る
+    return kFakeState;
+}
+
+- (void)oauthWithCode:(NSString *)code state:(NSString *)state {
+    
+    if(![state isEqualToString:self.state]) {
+        abort();
+    }
     
     NSURL *url = [NSURL URLWithString:@"https://github.com/"];
     AFHTTPClient *client = [[AFHTTPClient alloc] initWithBaseURL:url];
     NSDictionary *params = @{ @"code" : code,
                               @"client_id" : kClientId,
                               @"client_secret" : kClientSecret,
-                              @"state" : @""};
+                              @"state" : self.state};
     NSMutableURLRequest *request = [client requestWithMethod:@"POST" path:@"/login/oauth/access_token" parameters:params];
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {

@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 
 @interface OAuth : NSObject
-
-- (void)oauthWithCode:(NSString*)code;
+@property (nonatomic, retain) NSString *state;
+@property (nonatomic) BOOL enable;
++ (id)sharedObject;
++ (NSString*)stateGen;
+- (void)oauthWithCode:(NSString*)code state:(NSString*)state;
 @end

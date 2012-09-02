@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "Keys.h"
+#import "OAuth.h"
 
 @interface ViewController ()
 
@@ -38,7 +39,10 @@
 
 - (IBAction)startOAuth:(id)sender {
     NSString *scope = @"public_repo,repo,repo:status,gist";
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://github.com/login/oauth/authorize?client_id=%@&scope=%@",kClientId, scope]];
+    NSString *state = [OAuth stateGen];
+    ((OAuth*)[OAuth sharedObject]).state = state;
+    ((OAuth*)[OAuth sharedObject]).enable = YES;
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://github.com/login/oauth/authorize?client_id=%@&scope=%@&state=%@",kClientId, scope, state]];
     [[UIApplication sharedApplication] openURL:url];
 }
 @end

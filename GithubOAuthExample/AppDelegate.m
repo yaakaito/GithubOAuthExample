@@ -54,15 +54,19 @@
 }
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+    if(!((OAuth*)[OAuth sharedObject]).enable) {
+        abort();
+    }
+    
+    ((OAuth*)[OAuth sharedObject]).enable = NO;
     NSLog(@"%@", [url absoluteString]);
-    OAuth *oauth = [[OAuth alloc] init];
     NSArray *queryComponents = [[url query] componentsSeparatedByString:@"&"];
     NSMutableDictionary *queries = [NSMutableDictionary dictionary];
     for (NSString *component in queryComponents) {
         NSArray *kv = [component componentsSeparatedByString:@"="];
         [queries setObject:[kv objectAtIndex:1] forKey:[kv objectAtIndex:0]];
     }
-    [oauth oauthWithCode:[queries objectForKey:@"code"]];
+    [((OAuth*)[OAuth sharedObject]) oauthWithCode:[queries objectForKey:@"code"] state:[queries objectForKey:@"state"]];
     return YES;
 }
 
